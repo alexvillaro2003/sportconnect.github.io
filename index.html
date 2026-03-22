@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SportConnect — University Sports Social Network</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --orange:     #F4621F;
+      --orange-hot: #FF8C42;
+      --orange-dim: #C2440E;
+      --cream:      #FDF6EE;
+      --ink:        #1A120B;
+      --ink-mid:    #3D2B1F;
+      --ink-faint:  #7A5C4A;
+      --sand:       #EDD9C0;
+      --sand-light: #F7EDE2;
+      --white:      #FFFFFF;
+
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --font-mono:    'DM Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: rgba(253, 246, 238, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1.5px solid var(--sand);
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      letter-spacing: 0.05em;
+      color: var(--orange);
+    }
+    .nav-logo span { color: var(--ink); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.85rem; font-weight: 500; letter-spacing: 0.08em;
+      text-transform: uppercase; text-decoration: none; color: var(--ink-mid);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--orange); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 80px;
+      overflow: hidden;
+    }
+    .hero-left {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 6rem 3rem 6rem 5rem;
+      z-index: 2;
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--orange); color: var(--white);
+      font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.9rem; border-radius: 2px;
+      margin-bottom: 1.8rem; align-self: flex-start;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(4rem, 8vw, 7rem);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      margin-bottom: 1.8rem;
+      color: var(--ink);
+    }
+    .hero-title .accent { color: var(--orange); display: block; }
+    .hero-sub {
+      font-size: 1.15rem; font-weight: 300; line-height: 1.7;
+      color: var(--ink-mid); max-width: 42ch; margin-bottom: 2.5rem;
+    }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 0.7rem;
+      background: var(--orange); color: var(--white);
+      font-weight: 600; font-size: 0.9rem; letter-spacing: 0.06em;
+      text-transform: uppercase; text-decoration: none;
+      padding: 0.9rem 2rem; border-radius: 2px;
+      transition: background 0.25s, transform 0.2s;
+      align-self: flex-start;
+    }
+    .hero-cta:hover { background: var(--orange-dim); transform: translateY(-2px); }
+
+    .hero-right {
+      position: relative; display: flex; align-items: center; justify-content: center;
+      background: var(--orange);
+      clip-path: polygon(8% 0, 100% 0, 100% 100%, 0% 100%);
+      overflow: hidden;
+    }
+    .hero-right::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent, transparent 20px,
+        rgba(255,255,255,0.04) 20px, rgba(255,255,255,0.04) 21px
+      );
+    }
+    .hero-sport-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+      width: 85%; max-width: 420px;
+      position: relative; z-index: 2;
+      transform: rotate(-3deg);
+    }
+    .sport-cell {
+      aspect-ratio: 1;
+      background: rgba(255,255,255,0.12);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 2.2rem;
+      border-radius: 4px;
+      transition: background 0.3s;
+      cursor: default;
+    }
+    .sport-cell:hover { background: rgba(255,255,255,0.25); }
+    .sport-cell span {
+      font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.7); margin-top: 0.3rem; text-transform: uppercase;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    section { position: relative; z-index: 1; }
+    .section-inner { max-width: 1100px; margin: 0 auto; padding: 6rem 2rem; }
+
+    .section-label {
+      font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--orange);
+      display: flex; align-items: center; gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .section-label::after {
+      content: ''; flex: 1; max-width: 60px; height: 1.5px; background: var(--orange);
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      letter-spacing: 0.03em; line-height: 1;
+      color: var(--ink); margin-bottom: 1rem;
+    }
+    .section-desc {
+      font-size: 1.05rem; font-weight: 300; line-height: 1.75;
+      color: var(--ink-mid); max-width: 60ch;
+    }
+
+    /* ── PROBLEM / SOLUTION ── */
+    .problem-solution {
+      background: var(--ink);
+    }
+    .ps-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    }
+    .ps-col {
+      padding: 5rem 3rem;
+    }
+    .ps-col:first-child {
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    .ps-icon { font-size: 2.5rem; margin-bottom: 1.2rem; }
+    .ps-label {
+      font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--orange); margin-bottom: 0.6rem;
+    }
+    .ps-heading {
+      font-family: var(--font-display); font-size: 2.5rem; letter-spacing: 0.04em;
+      color: var(--white); margin-bottom: 1rem;
+    }
+    .ps-text {
+      font-size: 1rem; font-weight: 300; line-height: 1.75; color: rgba(255,255,255,0.6);
+    }
+
+    /* ── PHOTO STRIP ── */
+    .photo-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      height: 280px;
+      overflow: hidden;
+    }
+    .photo-slot {
+      position: relative;
+      background: var(--sand);
+      overflow: hidden;
+      cursor: pointer;
+      transition: flex 0.4s ease;
+    }
+    .photo-slot input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 3;
+    }
+    .photo-slot img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; z-index: 2; display: none;
+      transition: transform 0.5s ease;
+    }
+    .photo-slot:hover img { transform: scale(1.05); }
+    .photo-slot-label {
+      position: absolute; inset: 0; z-index: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.5rem;
+    }
+    .photo-slot-label .plus {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 2px dashed var(--orange); display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; color: var(--orange);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .photo-slot:hover .plus { background: var(--orange); color: white; transform: rotate(45deg); }
+    .photo-slot-label p {
+      font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--ink-faint); text-align: center; padding: 0 1rem;
+    }
+    .photo-slot-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 4;
+      padding: 1rem; background: linear-gradient(transparent, rgba(0,0,0,0.6));
+      opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    }
+    .photo-slot:hover .photo-slot-overlay { opacity: 1; }
+    .photo-slot-overlay p {
+      color: white; font-size: 0.72rem; letter-spacing: 0.08em;
+      text-transform: uppercase; font-family: var(--font-mono);
+    }
+
+    /* ── FEATURES ── */
+    .features-bg { background: var(--sand-light); }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+      margin-top: 3.5rem;
+    }
+    .feature-card {
+      background: var(--white);
+      border-top: 3px solid var(--orange);
+      padding: 2rem 1.8rem;
+      border-radius: 2px;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .feature-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(244,98,31,0.12); }
+    .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .feature-name {
+      font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 0.04em;
+      color: var(--ink); margin-bottom: 0.6rem;
+    }
+    .feature-desc {
+      font-size: 0.9rem; font-weight: 300; line-height: 1.7; color: var(--ink-mid);
+    }
+
+    /* ── TECH STACK ── */
+    .tech-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+      margin-top: 3.5rem; align-items: start;
+    }
+    .tech-block {
+      background: var(--white);
+      border-radius: 2px;
+      overflow: hidden;
+      box-shadow: 0 2px 20px rgba(26,18,11,0.06);
+    }
+    .tech-block-header {
+      background: var(--orange);
+      padding: 1.2rem 1.8rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .tech-block-header h3 {
+      font-family: var(--font-display); font-size: 1.5rem; letter-spacing: 0.05em; color: white;
+    }
+    .tech-block-header .db-icon { font-size: 1.6rem; }
+    .tech-block-body { padding: 1.5rem 1.8rem; }
+    .tech-item {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid var(--sand);
+    }
+    .tech-item:last-child { border-bottom: none; }
+    .tech-item-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--orange); margin-top: 0.35rem; flex-shrink: 0;
+    }
+    .tech-item-label {
+      font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.06em;
+      color: var(--orange); text-transform: uppercase; margin-bottom: 0.2rem;
+    }
+    .tech-item-val {
+      font-size: 0.88rem; font-weight: 400; color: var(--ink-mid); line-height: 1.5;
+    }
+    .tech-stack-pills {
+      display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 2rem;
+    }
+    .pill {
+      background: var(--ink); color: var(--cream);
+      font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.08em;
+      padding: 0.4rem 1rem; border-radius: 999px; text-transform: uppercase;
+    }
+    .pill.orange { background: var(--orange); }
+
+    /* ── DIAGRAM SECTION ── */
+    .diagrams-bg { background: var(--ink); }
+    .diagrams-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+      margin-top: 3rem;
+    }
+    .diagram-slot {
+      position: relative;
+      background: rgba(255,255,255,0.04);
+      border: 1.5px dashed rgba(244,98,31,0.4);
+      border-radius: 4px;
+      overflow: hidden;
+      min-height: 320px;
+      cursor: pointer;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .diagram-slot:hover { border-color: var(--orange); background: rgba(244,98,31,0.06); }
+    .diagram-slot input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 3;
+    }
+    .diagram-slot img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: contain; z-index: 2; display: none; padding: 1rem;
+    }
+    .diagram-placeholder {
+      position: absolute; inset: 0; z-index: 1;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1rem;
+    }
+    .diagram-placeholder .diag-plus {
+      width: 56px; height: 56px; border-radius: 50%;
+      border: 2px dashed rgba(244,98,31,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; color: var(--orange);
+      transition: transform 0.3s, background 0.3s;
+    }
+    .diagram-slot:hover .diag-plus { transform: rotate(45deg); background: rgba(244,98,31,0.2); }
+    .diagram-placeholder h4 {
+      font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.06em; color: var(--white);
+    }
+    .diagram-placeholder p {
+      font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(255,255,255,0.35); text-align: center;
+    }
+    .diagram-label {
+      position: absolute; top: 1rem; left: 1rem; z-index: 4;
+      background: var(--orange); color: white;
+      font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 0.3rem 0.8rem; border-radius: 2px;
+    }
+
+    /* ── SCREENS / PAGES ── */
+    .pages-scroll {
+      display: flex; gap: 1.2rem; overflow-x: auto;
+      padding-bottom: 1rem; margin-top: 3rem;
+      scrollbar-width: thin; scrollbar-color: var(--orange) var(--sand);
+    }
+    .page-card {
+      flex-shrink: 0; width: 220px;
+      background: var(--white);
+      border-radius: 4px; overflow: hidden;
+      box-shadow: 0 4px 20px rgba(26,18,11,0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .page-card:hover { transform: translateY(-8px); box-shadow: 0 16px 40px rgba(26,18,11,0.14); }
+    .page-card-top {
+      height: 130px; display: flex; align-items: center; justify-content: center;
+      font-size: 2.8rem;
+    }
+    .page-card-body { padding: 1.2rem; border-top: 2px solid var(--orange); }
+    .page-card-name {
+      font-family: var(--font-display); font-size: 1.2rem; letter-spacing: 0.04em;
+      color: var(--ink); margin-bottom: 0.4rem;
+    }
+    .page-card-desc { font-size: 0.8rem; line-height: 1.5; color: var(--ink-faint); }
+
+    /* ── ACHIEVEMENTS ── */
+    .achievements-bg { background: var(--orange); }
+    .achievements-bg .section-label { color: var(--white); }
+    .achievements-bg .section-label::after { background: rgba(255,255,255,0.5); }
+    .achievements-bg .section-title { color: var(--white); }
+    .achievements-bg .section-desc { color: rgba(255,255,255,0.8); }
+    .badges-grid {
+      display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 3rem;
+    }
+    .badge {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      border-radius: 4px;
+      padding: 1.5rem 2rem;
+      text-align: center; min-width: 160px; flex: 1;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .badge:hover { background: rgba(255,255,255,0.25); transform: scale(1.04); }
+    .badge-icon { font-size: 2.5rem; margin-bottom: 0.6rem; }
+    .badge-name {
+      font-family: var(--font-display); font-size: 1.1rem; letter-spacing: 0.05em;
+      color: white; margin-bottom: 0.3rem;
+    }
+    .badge-cond { font-size: 0.78rem; color: rgba(255,255,255,0.7); font-weight: 300; }
+
+    /* ── TEAM ── */
+    .team-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
+      margin-top: 3.5rem;
+    }
+    .team-card {
+      text-align: center;
+    }
+    .team-avatar {
+      width: 100%; aspect-ratio: 1;
+      background: var(--sand);
+      border-radius: 4px; margin-bottom: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem; border: 2px solid var(--sand);
+      overflow: hidden; position: relative;
+      transition: border-color 0.3s;
+    }
+    .team-card:hover .team-avatar { border-color: var(--orange); }
+    .team-name {
+      font-family: var(--font-display); font-size: 1.3rem; letter-spacing: 0.04em;
+      color: var(--ink); margin-bottom: 0.2rem;
+    }
+    .team-role {
+      font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--orange);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      padding: 3rem;
+      text-align: center;
+    }
+    .footer-logo {
+      font-family: var(--font-display); font-size: 2.5rem; letter-spacing: 0.06em;
+      color: var(--orange); margin-bottom: 0.5rem;
+    }
+    .footer-sub {
+      font-size: 0.8rem; color: rgba(255,255,255,0.35);
+      font-family: var(--font-mono); letter-spacing: 0.1em;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-left > * {
+      animation: fadeUp 0.7s both;
+    }
+    .hero-left > *:nth-child(1) { animation-delay: 0.1s; }
+    .hero-left > *:nth-child(2) { animation-delay: 0.25s; }
+    .hero-left > *:nth-child(3) { animation-delay: 0.4s; }
+    .hero-left > *:nth-child(4) { animation-delay: 0.55s; }
+
+    @keyframes floatIn {
+      from { opacity: 0; transform: rotate(-3deg) scale(0.9); }
+      to   { opacity: 1; transform: rotate(-3deg) scale(1); }
+    }
+    .hero-sport-grid { animation: floatIn 0.8s 0.4s both; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-right { clip-path: none; height: 300px; }
+      .hero-left { padding: 5rem 2rem 3rem; }
+      .ps-grid { grid-template-columns: 1fr; }
+      .ps-col:first-child { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .tech-row { grid-template-columns: 1fr; }
+      .diagrams-grid { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+      .photo-strip { grid-template-columns: repeat(2, 1fr); height: auto; }
+      .photo-slot { height: 180px; }
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Sport<span>Connect</span></div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#tech">Tech</a></li>
+      <li><a href="#diagrams">Diagrams</a></li>
+      <li><a href="#team">Team</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-tag">🎓 University Class Project</div>
+      <h1 class="hero-title">
+        Find Your
+        <span class="accent">Team.</span>
+        Play More.
+      </h1>
+      <p class="hero-sub">
+        SportConnect is a social web platform for university students with a SportCard. Create activities, join games, chat with teammates, and build a sports community on campus.
+      </p>
+      <a href="#features" class="hero-cta">Explore the project →</a>
+    </div>
+    <div class="hero-right">
+      <div class="hero-sport-grid">
+        <div class="sport-cell">⚽<span>Football</span></div>
+        <div class="sport-cell">🏀<span>Basketball</span></div>
+        <div class="sport-cell">🎾<span>Tennis</span></div>
+        <div class="sport-cell">🏊<span>Swimming</span></div>
+        <div class="sport-cell">🥊<span>Boxing</span></div>
+        <div class="sport-cell">🛼<span>Ice skating</span></div>
+        <div class="sport-cell">🧗‍♂️<span>Climbing</span></div>
+        <div class="sport-cell">🏋️<span>Gym</span></div>
+        <div class="sport-cell">🥎<span>Padel</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM / SOLUTION -->
+  <section class="problem-solution" id="about">
+    <div class="ps-grid">
+      <div class="ps-col">
+        <div class="ps-icon">😞</div>
+        <div class="ps-label">The Problem</div>
+        <div class="ps-heading">No one to play with</div>
+        <p class="ps-text">University students have access to free sports facilities through their SportCard — but finding people to play with is frustratingly hard. There's no central tool, no community, just missed opportunities.</p>
+      </div>
+      <div class="ps-col">
+        <div class="ps-icon">🔥</div>
+        <div class="ps-label">The Solution</div>
+        <div class="ps-heading">One platform, all sports</div>
+        <p class="ps-text">SportConnect brings students together. Create or join sports activities, chat with your group, track your stats, unlock achievements, and discover people who share your passion for sport on campus.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FEATURES -->
+  <section class="features-bg" id="features">
+    <div class="section-inner">
+      <div class="section-label">What we built</div>
+      <h2 class="section-title">Every Feature You Need</h2>
+      <p class="section-desc">A focused set of tools designed to make university sports social, organized and fun.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔐</div>
+          <div class="feature-name">SportCard Login</div>
+          <p class="feature-desc">Registration requires a valid university SportCard code. Only real students can join — keeping the community trusted and campus-focused.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <div class="feature-name">Activity Board</div>
+          <p class="feature-desc">Browse all open sports activities, filter by sport or date, and join with a single click. Open games or request-based access — your call as organizer.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <div class="feature-name">Group Chat</div>
+          <p class="feature-desc">Every activity gets its own real-time group chat via SignalR, stored in MongoDB and automatically deleted 24 hours after the activity ends.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <div class="feature-name">Personal Stats</div>
+          <p class="feature-desc">Track your most played sport, total activities joined, different sports practiced, and how many different players you've teamed up with.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏅</div>
+          <div class="feature-name">Achievements</div>
+          <p class="feature-desc">Unlock badges as you play more and engage with the community. Visual, motivating and automatically evaluated every time you join or create an activity.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <div class="feature-name">Find Players</div>
+          <p class="feature-desc">Search for other students by name, see their public profile with stats, achievements, languages and a short bio. Build your sports network.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGES OVERVIEW -->
+  <section>
+    <div class="section-inner">
+      <div class="section-label">Navigation</div>
+      <h2 class="section-title">Pages at a Glance</h2>
+      <div class="pages-scroll">
+        <div class="page-card">
+          <div class="page-card-top" style="background:#FFF3EC;">🏠</div>
+          <div class="page-card-body">
+            <div class="page-card-name">Homepage</div>
+            <p class="page-card-desc">Activity feed with filters, cards and detail popup</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-card-top" style="background:#FFF3EC;">➕</div>
+          <div class="page-card-body">
+            <div class="page-card-name">Create Activity</div>
+            <p class="page-card-desc">Sport, date, max players, public or request mode</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-card-top" style="background:#FFF3EC;">📌</div>
+          <div class="page-card-body">
+            <div class="page-card-name">My Activities</div>
+            <p class="page-card-desc">All your games in one place — click to open chat</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-card-top" style="background:#FFF3EC;">💬</div>
+          <div class="page-card-body">
+            <div class="page-card-name">Chat</div>
+            <p class="page-card-desc">Real-time group chat per activity, auto-expired</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-card-top" style="background:#FFF3EC;">👤</div>
+          <div class="page-card-body">
+            <div class="page-card-name">My Profile</div>
+            <p class="page-card-desc">Stats, achievements, bio, nationality & languages</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-card-top" style="background:#FFF3EC;">🔍</div>
+          <div class="page-card-body">
+            <div class="page-card-name">Search Users</div>
+            <p class="page-card-desc">Find students by name and browse their profile</p>
+          </div>
+        </div>
+        <div class="page-card">
+          <div class="page-card-top" style="background:#FFF3EC;">🛡️</div>
+          <div class="page-card-body">
+            <div class="page-card-name">Admin Panel</div>
+            <p class="page-card-desc">Moderate activities and users — admin role only</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section style="background: var(--sand-light);" id="tech">
+    <div class="section-inner">
+      <div class="section-label">Under the Hood</div>
+      <h2 class="section-title">Tech Stack</h2>
+      <p class="section-desc">Two databases, one real-time layer — each chosen for the right reasons.</p>
+      <div class="tech-row">
+        <div class="tech-block">
+          <div class="tech-block-header">
+            <h3>SQL — The Source of Truth</h3>
+          </div>
+          <div class="tech-block-body">
+            <div class="tech-item">
+              <div class="tech-item-dot"></div>
+              <div>
+                <div class="tech-item-label">Users & SportCards</div>
+                <div class="tech-item-val">Auth, profiles, nationality, languages, roles</div>
+              </div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-item-dot"></div>
+              <div>
+                <div class="tech-item-label">Activities</div>
+                <div class="tech-item-val">Sport, date, capacity, mode (public / request)</div>
+              </div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-item-dot"></div>
+              <div>
+                <div class="tech-item-label">Participations</div>
+                <div class="tech-item-val">Who joined what — confirmed, pending or rejected</div>
+              </div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-item-dot"></div>
+              <div>
+                <div class="tech-item-label">Achievements</div>
+                <div class="tech-item-val">Logros table + UsuarioLogros with unlock date</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tech-block">
+          <div class="tech-block-header">
+            <h3>MongoDB — The Chat Engine</h3>
+          </div>
+          <div class="tech-block-body">
+            <div class="tech-item">
+              <div class="tech-item-dot"></div>
+              <div>
+                <div class="tech-item-label">Messages Collection</div>
+                <div class="tech-item-val">activityId, userId, username, text, sentAt</div>
+              </div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-item-dot"></div>
+              <div>
+                <div class="tech-item-label">TTL Index</div>
+                <div class="tech-item-val">Auto-deletes messages 24h after activity ends — no manual cleanup needed</div>
+              </div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-item-dot"></div>
+              <div>
+                <div class="tech-item-label">Compound Index</div>
+                <div class="tech-item-val">activityId + sentAt for instant message history retrieval</div>
+              </div>
+            </div>
+            <div class="tech-item">
+              <div class="tech-item-dot"></div>
+              <div>
+                <div class="tech-item-label">SignalR Hub</div>
+                <div class="tech-item-val">Real-time delivery to all connected participants</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tech-stack-pills">
+        <span class="pill orange">ASP.NET Core</span>
+        <span class="pill">C#</span>
+        <span class="pill">SQL Server</span>
+        <span class="pill orange">MongoDB</span>
+        <span class="pill">SignalR</span>
+        <span class="pill">JWT Auth</span>
+        <span class="pill">ASP.NET Identity</span>
+        <span class="pill orange">Razor Pages</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIAGRAMS -->
+  <section class="diagrams-bg" id="diagrams">
+    <div class="section-inner">
+      <div class="section-label" style="color:var(--orange-hot);">Technical</div>
+      <h2 class="section-title" style="color:var(--white);">Database & Class Diagrams</h2>
+      <p class="section-desc" style="color:rgba(255,255,255,0.55);">Click each panel to upload your diagram image.</p>
+      <div class="diagrams-grid">
+        <div class="diagram-slot" onclick="this.querySelector('input').click()">
+          <div class="diagram-label">SQL Schema</div>
+          <input type="file" accept="image/*" onchange="loadDiagram(this)" />
+          <img alt="SQL Database Diagram" />
+          <div class="diagram-placeholder">
+            <div class="diag-plus">+</div>
+            <h4>SQL Database Diagram</h4>
+            <p>Upload your relational<br />schema / ER diagram here</p>
+          </div>
+        </div>
+        <div class="diagram-slot" onclick="this.querySelector('input').click()">
+          <div class="diagram-label">MongoDB Schema</div>
+          <input type="file" accept="image/*" onchange="loadDiagram(this)" />
+          <img alt="MongoDB Diagram" />
+          <div class="diagram-placeholder">
+            <div class="diag-plus">+</div>
+            <h4>MongoDB Document Schema</h4>
+            <p>Upload your MongoDB<br />collection structure here</p>
+          </div>
+        </div>
+        <div class="diagram-slot" onclick="this.querySelector('input').click()">
+          <div class="diagram-label">Class Diagram</div>
+          <input type="file" accept="image/*" onchange="loadDiagram(this)" />
+          <img alt="Class Diagram" />
+          <div class="diagram-placeholder">
+            <div class="diag-plus">+</div>
+            <h4>Class Diagram</h4>
+            <p>Upload your UML<br />class diagram here</p>
+          </div>
+        </div>
+        <div class="diagram-slot" onclick="this.querySelector('input').click()">
+          <div class="diagram-label">Architecture</div>
+          <input type="file" accept="image/*" onchange="loadDiagram(this)" />
+          <img alt="Architecture Diagram" />
+          <div class="diagram-placeholder">
+            <div class="diag-plus">+</div>
+            <h4>System Architecture</h4>
+            <p>Upload a flow or<br />architecture diagram here</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACHIEVEMENTS -->
+  <section class="achievements-bg">
+    <div class="section-inner">
+      <div class="section-label">Gamification</div>
+      <h2 class="section-title">Unlock Achievements</h2>
+      <p class="section-desc">Play more, earn more. Badges are automatically evaluated every time you join or create an activity.</p>
+      <div class="badges-grid">
+        <div class="badge">
+          <div class="badge-icon">🎯</div>
+          <div class="badge-name">First Match</div>
+          <div class="badge-cond">Join 1 activity</div>
+        </div>
+        <div class="badge">
+          <div class="badge-icon">🔥</div>
+          <div class="badge-name">Veteran</div>
+          <div class="badge-cond">Play 20 activities</div>
+        </div>
+        <div class="badge">
+          <div class="badge-icon">📣</div>
+          <div class="badge-name">Organizer</div>
+          <div class="badge-cond">Create 5 activities</div>
+        </div>
+        <div class="badge">
+          <div class="badge-icon">🌐</div>
+          <div class="badge-name">All-Rounder</div>
+          <div class="badge-cond">Play 3 different sports</div>
+        </div>
+        <div class="badge">
+          <div class="badge-icon">🤝</div>
+          <div class="badge-name">Social Player</div>
+          <div class="badge-cond">Play with 10 different people</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section id="team">
+    <div class="section-inner">
+      <div class="section-label">Who we are</div>
+      <h2 class="section-title">Meet the Team</h2>
+      <p class="section-desc">A group of university students building something we'd actually want to use ourselves.</p>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar">👤</div>
+          <div class="team-name">Alejandro Villarreal</div>
+          <div class="team-role">r1088891</div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">👤</div>
+          <div class="team-name">Yoel Capilla</div>
+          <div class="team-role">r1077020</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">SportConnect</div>
+    <p class="footer-sub">University Class Project · Built with C#, SQL & MongoDB · No budget, all passion</p>
+  </footer>
+
+  <script>
+    function loadPhoto(input) {
+      const slot = input.closest('.photo-slot');
+      const img = slot.querySelector('img');
+      const label = slot.querySelector('.photo-slot-label');
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          img.src = e.target.result;
+          img.style.display = 'block';
+          label.style.opacity = '0';
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function loadDiagram(input) {
+      const slot = input.closest('.diagram-slot');
+      const img = slot.querySelector('img');
+      const placeholder = slot.querySelector('.diagram-placeholder');
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          img.src = e.target.result;
+          img.style.display = 'block';
+          placeholder.style.display = 'none';
+          slot.style.borderStyle = 'solid';
+          slot.style.borderColor = 'rgba(244,98,31,0.6)';
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // Smooth reveal on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.feature-card, .page-card, .badge, .team-card, .tech-block, .diagram-slot').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+      el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      observer.observe(el);
+    });
+  </script>
+
+</body>
+</html>
