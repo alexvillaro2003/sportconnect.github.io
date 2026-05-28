@@ -1,0 +1,63 @@
+<Window x:Class="SportConnect.UI.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SportConnect — Sign in"
+        Height="520" Width="420"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize">
+
+    <Grid Margin="40">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,20,0,30">
+            <TextBlock Text="SportConnect"
+                       FontSize="28" FontWeight="Bold"
+                       Foreground="{StaticResource PrimaryBrush}"
+                       HorizontalAlignment="Center" />
+            <TextBlock Text="Find your team. Play more."
+                       FontSize="13"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       HorizontalAlignment="Center"
+                       Margin="0,4,0,0" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1">
+            <TextBlock Text="Username or email" Margin="0,0,0,4"
+                       Foreground="{StaticResource TextPrimaryBrush}" />
+            <TextBox Text="{Binding UsernameOrEmail, UpdateSourceTrigger=PropertyChanged}" />
+
+            <TextBlock Text="Password" Margin="0,16,0,4"
+                       Foreground="{StaticResource TextPrimaryBrush}" />
+            <PasswordBox x:Name="PasswordBox" PasswordChanged="PasswordBox_PasswordChanged" />
+
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="{StaticResource ErrorBrush}"
+                       TextWrapping="Wrap"
+                       Margin="0,12,0,0"
+                       Visibility="{Binding ErrorMessage, Converter={StaticResource NullToVisibilityConverter}}" />
+
+            <Button Content="Sign in"
+                    Style="{StaticResource PrimaryButton}"
+                    Command="{Binding LoginCommand}"
+                    IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBooleanConverter}}"
+                    Margin="0,24,0,0" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal"
+                    HorizontalAlignment="Center" Margin="0,20,0,0">
+            <TextBlock Text="No account yet?"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       VerticalAlignment="Center" />
+            <Button Content="Create one"
+                    Background="Transparent" BorderThickness="0"
+                    Foreground="{StaticResource PrimaryBrush}"
+                    Cursor="Hand" Margin="6,0,0,0"
+                    Command="{Binding GoToRegisterCommand}" />
+        </StackPanel>
+    </Grid>
+</Window>
