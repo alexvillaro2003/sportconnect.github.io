@@ -1,0 +1,199 @@
+<UserControl x:Class="SportConnect.UI.Views.ProfileView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="640">
+
+            <!-- Loading / Error -->
+            <TextBlock Text="Loading profile..."
+                       HorizontalAlignment="Center" Margin="0,40,0,0"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       Visibility="{Binding IsBusy, Converter={StaticResource NullToVisibilityConverter}}" />
+            <TextBlock Text="{Binding ErrorMessage}"
+                       Foreground="{StaticResource ErrorBrush}" TextWrapping="Wrap"
+                       Visibility="{Binding ErrorMessage, Converter={StaticResource NullToVisibilityConverter}}" />
+
+            <!-- ── Header: photo + name + email ── -->
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,28">
+                <StackPanel>
+                    <!-- Circular photo -->
+                    <Grid Width="80" Height="80">
+                        <Ellipse Fill="{StaticResource BorderBrush}" />
+                        <Ellipse>
+                            <Ellipse.Fill>
+                                <ImageBrush ImageSource="{Binding ProfilePicture}" Stretch="UniformToFill" />
+                            </Ellipse.Fill>
+                            <Ellipse.Style>
+                                <Style TargetType="Ellipse">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ProfilePicture}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Ellipse.Style>
+                        </Ellipse>
+                    </Grid>
+                    <Button Content="Change photo"
+                            Command="{Binding UploadPhotoCommand}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="{StaticResource PrimaryBrush}"
+                            Padding="0,6,0,0"
+                            Cursor="Hand"
+                            FontSize="11" />
+                </StackPanel>
+
+                <StackPanel VerticalAlignment="Center" Margin="20,0,0,0">
+                    <TextBlock Text="{Binding Username}" FontSize="22" FontWeight="Bold" />
+                    <TextBlock Text="{Binding Email}"
+                               Foreground="{StaticResource TextSecondaryBrush}"
+                               Margin="0,4,0,0" />
+                </StackPanel>
+            </StackPanel>
+
+            <!-- ── Stats ── -->
+            <Border Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1" CornerRadius="6"
+                    Padding="20,16" Margin="0,0,0,24">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding ActivitiesCreated}"
+                                   FontSize="28" FontWeight="Bold"
+                                   Foreground="{StaticResource PrimaryBrush}"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="Activities created"
+                                   FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding ActivitiesJoined}"
+                                   FontSize="28" FontWeight="Bold"
+                                   Foreground="{StaticResource PrimaryBrush}"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="Activities joined"
+                                   FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding MostPlayedSport}"
+                                   FontSize="20" FontWeight="Bold"
+                                   Foreground="{StaticResource PrimaryBrush}"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="Favourite sport"
+                                   FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ── Achievements ── -->
+            <TextBlock Text="Achievements" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12" />
+
+            <TextBlock Text="No achievements yet. Start joining activities!"
+                       Foreground="{StaticResource TextSecondaryBrush}"
+                       Margin="0,0,0,24">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Achievements.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <ItemsControl ItemsSource="{Binding Achievements}" Margin="0,0,0,24">
+                <ItemsControl.Style>
+                    <Style TargetType="ItemsControl">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Achievements.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ItemsControl.Style>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{StaticResource SurfaceBrush}"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1" CornerRadius="6"
+                                Padding="14,10" Margin="0,0,8,8">
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource PrimaryBrush}" />
+                                <TextBlock Text="{Binding Description}"
+                                           FontSize="11"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           TextWrapping="Wrap" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- ── About me ── -->
+            <TextBlock Text="About me" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12" />
+
+            <TextBlock Text="Bio" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4" />
+            <TextBox Text="{Binding Bio, UpdateSourceTrigger=PropertyChanged}"
+                     Height="80" AcceptsReturn="True" TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     Margin="0,0,0,12" />
+
+            <TextBlock Text="Nationality" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4" />
+            <TextBox Text="{Binding Nationality, UpdateSourceTrigger=PropertyChanged}"
+                     Margin="0,0,0,16" />
+
+            <Button Content="Save changes"
+                    Style="{StaticResource PrimaryButton}"
+                    Command="{Binding SaveProfileCommand}"
+                    HorizontalAlignment="Left"
+                    Margin="0,0,0,20" />
+
+            <Separator Margin="0,0,0,16" />
+
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Change password"
+                        Command="{Binding ChangePasswordCommand}"
+                        Background="Transparent"
+                        BorderBrush="{StaticResource PrimaryBrush}"
+                        BorderThickness="1"
+                        Foreground="{StaticResource PrimaryBrush}"
+                        Padding="12,6"
+                        Cursor="Hand"
+                        Margin="0,0,12,0" />
+
+                <Button Content="Delete account"
+                        Command="{Binding DeleteAccountCommand}"
+                        Background="Transparent"
+                        BorderBrush="{StaticResource ErrorBrush}"
+                        BorderThickness="1"
+                        Foreground="{StaticResource ErrorBrush}"
+                        Padding="12,6"
+                        Cursor="Hand" />
+            </StackPanel>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
