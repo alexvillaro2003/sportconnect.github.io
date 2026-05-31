@@ -1,4 +1,3 @@
-@'
 # SportConnect
 
 WPF desktop application to find sports activities and players in your area. Built as the Inspiration Lab project for Thomas More Mechelen, AY 2025-2026.
@@ -36,4 +35,3 @@ dotnet test
 ## Authors
 
 Inspiration Lab 2025-2026 — Thomas More Mechelen.
-'@ | Out-File -FilePath README.md -Encoding utf8
