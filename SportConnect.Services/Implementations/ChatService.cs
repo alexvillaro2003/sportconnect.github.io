@@ -55,7 +55,7 @@ public class ChatService : IChatService
     public async Task<bool> IsChatActiveAsync(int activityId)
     {
         var activity = await _db.Activities.FindAsync(activityId);
-        return activity is not null && activity.IsChatActive(DateTime.UtcNow);
+        return activity is not null && activity.IsChatActive(DateTime.Now);
     }
 }
 
