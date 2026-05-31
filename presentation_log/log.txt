@@ -1,0 +1,66 @@
+git log
+commit 7b0c611f9c65a9da3f2ba8e736b285b33bde793a (HEAD -> main, origin/main, origin/HEAD)
+Author: Yoel <ycapilla@campuscamarafp.com>
+Date:   Sun May 31 20:03:08 2026 +0200
+
+    Add git log
+
+commit 4286996e82e7c6f66f436810d5c48b1eb83839ea
+Author: Yoel <ycapilla@campuscamarafp.com>
+Date:   Sun May 31 19:56:00 2026 +0200
+
+    Add: presentation
+
+commit 45fc1ae5decf43bdd9d597cc9e6a4dfeeb038c28
+Author: alexvillaro2003 <alexvillaro2003@gmail.com>
+Date:   Sun May 31 19:32:01 2026 +0200
+
+    feat: upgraed README.md
+
+commit f17b30d82f9b56dcd0614a9204adb023c28e1e84
+Author: alexvillaro2003 <alexvillaro2003@gmail.com>
+Date:   Sun May 31 19:30:04 2026 +0200
+
+    feat: time consistency
+
+commit d6340d9d23653aea29857486b8499d362d53521a
+Author: alexvillaro2003 <alexvillaro2003@gmail.com>
+Date:   Sat May 30 00:00:24 2026 +0200
+
+    feat: add user profile, stats and achievement system
+
+commit 7977bf958aa688f6a10d236f969bd4712f8559da
+Author: Yoel <ycapilla@campuscamarafp.com>
+Date:   Fri May 29 16:58:40 2026 +0200
+
+    feat: add activities feature with feed, create and details
+
+commit 6bde2f3a7be4c7fc60e15264a68e895e8a9ec047
+Author: alexvillaro2003 <alexvillaro2003@gmail.com>
+Date:   Thu May 28 16:04:02 2026 +0200
+
+    feat: add WPF shell with login and register
+
+commit 9d32a850e7cf484fe707ef0a417100a560d378a4
+Author: Yoel <ycapilla@campuscamarafp.com>
+Date:   Wed May 27 17:24:45 2026 +0200
+
+    feat: add authentication services with unit tests
+
+commit 541ac34f7a529a83bb0403a9f7f611584ca139a4
+Author: alexvillaro2003 <alexvillaro2003@gmail.com>
+Date:   Wed May 27 00:38:29 2026 +0200
+
+    feat: add domain layer and data access with EF Core
+
+commit ee35ca203b29149370cee786e42465fa4aa69c74
+Author: Yoel <ycapilla@campuscamarafp.com>
+Date:   Wed May 27 00:25:12 2026 +0200
+
+    chore: initialize repository with README, gitignore and empty solution
+
+commit 45fdd68934524544b5b3eb28ef22998b4d89007c
+Author: Alejandro Villarreal <148243610+alexvillaro2003@users.noreply.github.com>
+Date:   Sun Mar 22 21:47:27 2026 +0100
+
+    Add index.html
